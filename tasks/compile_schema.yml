@@ -1,0 +1,19 @@
+- name: Split UUID
+  ansible.builtin.set_fact:
+    uuid: "{{ gnome_extension_info.uuid | split('@') }}"
+
+- name: Set extension name
+  ansible.builtin.set_fact:
+    extension_name: "{{ uuid[0] }}"
+
+- name: Move gsettings schema before compilation
+  become: true
+  ansible.builtin.copy:
+    src: "{{ ansible_env.HOME }}/.local/share/gnome-shell/extensions/{{ gnome_extension_info.uuid }}/schemas/org.gnome.shell.extensions.{{ extension_name }}.gschema.xml"
+    dest: /usr/share/glib-2.0/schemas/org.gnome.shell.extensions.{{ extension_name }}.gschema.xml
+    remote_src: true
+    mode: preserve
+
+- name: Compile gsettings schema
+  become: true
+  ansible.builtin.shell: glib-compile-schemas /usr/share/glib-2.0/schemas/

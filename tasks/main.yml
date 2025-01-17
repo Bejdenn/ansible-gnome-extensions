@@ -22,3 +22,9 @@
     gnome_extension_info: "{{ item.json }}"
   loop: "{{ r_gnome_extension_info.results }}"
   when: item.status == 200
+
+- ansible.builtin.include_tasks: compile_schema.yml
+  vars:
+    gnome_extension_info: "{{ item.json }}"
+  loop: "{{ r_gnome_extension_info.results }}"
+  when: item.status == 200
